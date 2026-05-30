@@ -114,6 +114,14 @@ export class GameScene extends Phaser.Scene {
 
     createBoss() {
         this.boss = this.physics.add.sprite(800, 400, 'boss');
+        // Escalamos al jefe de manera similar al jugador para que mida unos 120 pixeles de alto (puedes cambiar este 120 si lo quieres más grande/pequeño)
+        const bossScale = 120 / this.boss.height;
+        this.boss.setScale(bossScale);
+        
+        // Ajustamos su tamaño de colisión
+        this.boss.body.setSize(this.boss.width * 0.8, this.boss.height * 0.8);
+        this.boss.body.setOffset(this.boss.width * 0.1, this.boss.height * 0.2);
+
         this.boss.setCollideWorldBounds(true);
         this.physics.add.collider(this.boss, this.platforms);
         this.bossHealth = 100;

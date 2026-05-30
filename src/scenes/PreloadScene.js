@@ -32,6 +32,9 @@ export class PreloadScene extends Phaser.Scene {
         // Cargar imagen estática del personaje
         this.load.image('player', 'assets/imagenes/Personaje.png');
 
+        // Cargar enemigo final
+        this.load.image('boss', 'assets/imagenes/enemigo.png');
+
         // Cargar fondo del nivel 1
         this.load.image('bg_nivel1', 'assets/imagenes/escenario.jpg');
 
@@ -83,12 +86,6 @@ export class PreloadScene extends Phaser.Scene {
         g.fillStyle(0xff00ff);
         g.fillTriangle(10, 0, 20, 10, 10, 20, 0, 10);
         g.generateTexture('powerup', 20, 20);
-        g.clear();
-        
-        // Boss (Big Red Rectangle)
-        g.fillStyle(0xaa0000);
-        g.fillRect(0, 0, 80, 80);
-        g.generateTexture('boss', 80, 80);
         g.clear();
 
         // Goal / Portal
