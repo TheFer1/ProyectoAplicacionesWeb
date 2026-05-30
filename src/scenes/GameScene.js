@@ -18,14 +18,20 @@ export class GameScene extends Phaser.Scene {
         this.isTransitioning = false;
         this.cameras.main.fadeIn(800, 0, 0, 0);
 
-        if (GameManager.state.level === 1) {
-            // Añadimos la imagen al centro (400, 300)
-            const bg = this.add.image(400, 300, 'bg_nivel1');
-            // Hacemos que se estire al tamaño de la cámara de juego (800x600)
-            bg.setDisplaySize(800, 600);
-            // Esto hace que el fondo se quede "pegado" a la cámara simulando profundidad infinita
-            bg.setScrollFactor(0);
+        // Seleccionar fondo según el nivel
+        let bgKey = 'bg_nivel1';
+        let worldWidth = 2900; // Por defecto el nivel 1 medirá 3000 pixeles de largo
+        if (GameManager.state.level === 2) {
+            bgKey = 'bg_nivel2';
+            worldWidth = 3500; // El nivel 2 medirá 3500
+        } else if (GameManager.state.level === 3) {
+            bgKey = 'bg_nivel3';
+            worldWidth = 800; // El nivel del Jefe es de tamaño de pantalla (800)
         }
+
+        const bg = this.add.image(400, 300, bgKey);
+        bg.setDisplaySize(800, 600);
+        bg.setScrollFactor(0);
 
         this.audioManager = new AudioManager(this);
         this.audioManager.playMusic('bgMusic', { loop: true, volume: 0.3 });
@@ -33,9 +39,9 @@ export class GameScene extends Phaser.Scene {
         this.createLevel();
         
         this.player = new Player(this, 50, 400);
-        this.physics.world.setBounds(0, 0, 2000, 600); // <-- Expandimos los límites de la física
+        this.physics.world.setBounds(0, 0, worldWidth, 600); // <-- Expandimos los límites de la física dinámicamente
         this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
-        this.cameras.main.setBounds(0, 0, 2000, 600);
+        this.cameras.main.setBounds(0, 0, worldWidth, 600);
 
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.enemies, this.platforms);
@@ -68,43 +74,58 @@ export class GameScene extends Phaser.Scene {
         this.checkpoints = this.physics.add.group({ allowGravity: false });
         this.powerups = this.physics.add.group({ allowGravity: false });
 
-        for (let i = 0; i < 3; i++) {
+        const level = GameManager.state.level;
+
+        // Expandir el piso base (ground). Según el nivel, añadimos más cuadros de tierra en el suelo para que no caiga al infinito.
+        let groundTiles = 1; // Para el nivel 3 (Jefe) solo 1 piso de 800
+        if (level === 1) groundTiles = 4; // Suelo hasta 3200
+        if (level === 2) groundTiles = 5; // Suelo hasta 4000
+        
+        for (let i = 0; i < groundTiles; i++) {
             this.platforms.create(400 + (i * 800), 584, 'ground');
         }
 
-        const level = GameManager.state.level;
-
         if (level === 1) {
-            this.platforms.create(400, 450, 'platform');
-            this.platforms.create(600, 350, 'platform');
-            this.platforms.create(800, 250, 'platform');
-            this.platforms.create(1100, 350, 'platform');
-            this.platforms.create(1400, 450, 'platform');
+            // Nivel 1 ampliado (Nuevas plataformas a lo largo del mapa entero)
+            const coords = [400, 600, 800, 1100, 1400, 1700, 2000, 2400, 2700];
+            const heights = [450, 350, 250, 350, 450, 350, 250, 350, 450];
             
-            this.coins.add(new Coin(this, 400, 400));
-            this.coins.add(new Coin(this, 600, 300));
-            this.coins.add(new Coin(this, 800, 200));
+            for(let i = 0; i < coords.length; i++) {
+                this.platforms.create(coords[i], heights[i], 'platform');
+                this.coins.add(new Coin(this, coords[i], heights[i] - 50));
+            }
 
+            // Múltiples enemigos
             this.enemies.add(new Enemy(this, 500, 500, 100));
+            this.enemies.add(new Enemy(this, 1500, 500, 150));
+            this.enemies.add(new Enemy(this, 2200, 500, 100));
+
             this.checkpoints.add(new Checkpoint(this, 1000, 530));
+            this.checkpoints.add(new Checkpoint(this, 2000, 530));
 
         } else if (level === 2) {
-            this.platforms.create(300, 450, 'platform');
-            this.platforms.create(500, 300, 'platform');
-            this.platforms.create(700, 450, 'platform');
-            this.platforms.create(1000, 350, 'platform');
-            this.platforms.create(1300, 250, 'platform');
-            
-            this.coins.add(new Coin(this, 300, 400));
-            this.coins.add(new Coin(this, 700, 400));
-            this.coins.add(new Coin(this, 1000, 300));
+            // Nivel 2 más largo y con más obstáculos
+            const coords = [300, 500, 700, 1000, 1300, 1600, 1900, 2200, 2600, 3000];
+            const heights = [450, 300, 450, 350, 250, 400, 250, 150, 350, 250];
 
+            for(let i = 0; i < coords.length; i++) {
+                this.platforms.create(coords[i], heights[i], 'platform');
+                this.coins.add(new Coin(this, coords[i], heights[i] - 50));
+            }
+
+            // Más enemigos esparcidos por el mapa
             this.enemies.add(new Enemy(this, 300, 400, 50));
             this.enemies.add(new Enemy(this, 700, 400, 50));
             this.enemies.add(new Enemy(this, 1000, 500, 150));
+            this.enemies.add(new Enemy(this, 1500, 500, 100));
+            this.enemies.add(new Enemy(this, 2100, 500, 150));
+            this.enemies.add(new Enemy(this, 2600, 500, 100));
 
             this.powerups.add(new PowerUp(this, 500, 250));
+            this.powerups.add(new PowerUp(this, 1900, 200));
+
             this.checkpoints.add(new Checkpoint(this, 1200, 530));
+            this.checkpoints.add(new Checkpoint(this, 2400, 530));
 
         } else if (level === 3) {
             this.platforms.create(200, 450, 'platform');

@@ -35,8 +35,10 @@ export class PreloadScene extends Phaser.Scene {
         // Cargar enemigo final
         this.load.image('boss', 'assets/imagenes/enemigo.png');
 
-        // Cargar fondo del nivel 1
+        // Cargar fondos
         this.load.image('bg_nivel1', 'assets/imagenes/escenario.jpg');
+        this.load.image('bg_nivel2', 'assets/imagenes/Escenario2.jpg');
+        this.load.image('bg_nivel3', 'assets/imagenes/Escenario3.png');
 
         // Since we don't have real assets, we generate them procedurally for testing
         this.generateAssets();
