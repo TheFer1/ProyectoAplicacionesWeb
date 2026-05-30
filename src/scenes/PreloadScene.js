@@ -27,7 +27,7 @@ export class PreloadScene extends Phaser.Scene {
         });
 
         // Cargar audios
-        this.load.audio('bgMusic', 'assets/audio/kontraa-water-afro-pop-music-445661.mp3');
+        this.load.audio('bgMusic', 'assets/audio/teme_V2.3.mp3');
         this.load.audio('jumpSound', 'assets/audio/jump1.mp3');
         this.load.audio('coinSound', 'assets/audio/coin1.mp3');
         this.load.audio('damageSound', 'assets/audio/pain6.mp3');
@@ -44,6 +44,12 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image('bg_nivel3', 'assets/imagenes/Escenario3.png');
 
         this.load.image('espina', 'assets/imagenes/espinas.png');
+
+        // bloques y plataformas
+        this.load.image('bloquesPlanta', '/assets/imagenes/bloquesplat.png');
+        this.load.image('bloquesMadera', '/assets/imagenes/platmad.png');
+        this.load.image('bloquesLava', '/assets/imagenes/plataformapiedra.png');
+
 
         // Since we don't have real assets, we generate them procedurally for testing
         this.generateAssets();
@@ -62,7 +68,7 @@ export class PreloadScene extends Phaser.Scene {
         // Enemy (Red square)
         g.fillStyle(0xff0000);
         g.fillRect(0, 0, 32, 32);
-        g.generateTexture('enemy', 32, 32);
+        g.generateTexture('espina', 32, 32);
         g.clear();
         
         // Coin (Yellow circle)

@@ -1,6 +1,6 @@
 export default class Enemy extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, range = 100) {
-        super(scene, x, y, 'enemy');
+        super(scene, x, y, 'espina');
         scene.add.existing(this);
         scene.physics.add.existing(this);
 

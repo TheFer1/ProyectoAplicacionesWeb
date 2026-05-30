@@ -91,8 +91,16 @@ export class GameScene extends Phaser.Scene {
             const heights = [450, 350, 250, 350, 450, 350, 250, 350, 450];
             
             for(let i = 0; i < coords.length; i++) {
-                this.platforms.create(coords[i], heights[i], 'platform');
-                this.coins.add(new Coin(this, coords[i], heights[i] - 50));
+                
+              const plataforma = this.platforms.create(
+                 coords[i],
+                 heights[i],
+                'bloquesPlanta');
+
+             plataforma.setDisplaySize(120, 40);
+             plataforma.refreshBody();
+
+            this.coins.add(new Coin(this, coords[i], heights[i] - 50))
             }
 
             // Múltiples enemigos
@@ -109,7 +117,16 @@ export class GameScene extends Phaser.Scene {
             const heights = [450, 300, 450, 350, 250, 400, 250, 150, 350, 250];
 
             for(let i = 0; i < coords.length; i++) {
-                this.platforms.create(coords[i], heights[i], 'platform');
+
+                                
+              const plataforma = this.platforms.create(
+                 coords[i],
+                 heights[i],
+                'bloquesMadera');
+
+             plataforma.setDisplaySize(120, 40);
+             plataforma.refreshBody();
+
                 this.coins.add(new Coin(this, coords[i], heights[i] - 50));
             }
 
@@ -128,9 +145,24 @@ export class GameScene extends Phaser.Scene {
             this.checkpoints.add(new Checkpoint(this, 2400, 530));
 
         } else if (level === 3) {
-            this.platforms.create(200, 450, 'platform');
-            this.platforms.create(800, 450, 'platform');
-        }
+
+    const plataformas = [
+        { x: 350, y: 350 },
+        { x: 550, y: 450 },
+        { x: 750, y: 350 }
+    ];
+
+    plataformas.forEach(pos => {
+        const p = this.platforms.create(
+            pos.x,
+            pos.y,
+            'bloquesLava'
+        );
+
+        p.setDisplaySize(100, 20);
+        p.refreshBody();
+    });
+}
     }
 
     createBoss() {
