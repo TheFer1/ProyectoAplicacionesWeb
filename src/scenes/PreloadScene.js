@@ -28,6 +28,9 @@ export class PreloadScene extends Phaser.Scene {
 
         // Cargar audios
         this.load.audio('bgMusic', 'assets/audio/kontraa-water-afro-pop-music-445661.mp3');
+        this.load.audio('jumpSound', 'assets/audio/jump1.mp3');
+        this.load.audio('coinSound', 'assets/audio/coin1.mp3');
+        this.load.audio('damageSound', 'assets/audio/pain6.mp3');
 
         // Cargar imagen estática del personaje
         this.load.image('player', 'assets/imagenes/Personaje.png');
@@ -39,6 +42,8 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image('bg_nivel1', 'assets/imagenes/escenario.jpg');
         this.load.image('bg_nivel2', 'assets/imagenes/Escenario2.jpg');
         this.load.image('bg_nivel3', 'assets/imagenes/Escenario3.png');
+
+        this.load.image('espina', 'assets/imagenes/espinas.png');
 
         // Since we don't have real assets, we generate them procedurally for testing
         this.generateAssets();

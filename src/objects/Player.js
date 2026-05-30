@@ -57,7 +57,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
                     scaleY: this.baseScale * 0.6,
                     scaleX: this.baseScale * 1.2,
                     duration: 100,
-                    yoyo: true
+                    yoyo: true,
                 });
             }
         }
@@ -65,12 +65,13 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         if (jumpPressed && this.jumpCount < 2) {
             this.setVelocityY(-400);
             this.jumpCount++;
-            
+            this.scene.sound.play('jumpSound');
+
             if (mobileControls) {
                 mobileControls.clearJump;
+                this
             }
             
-            this.scene.events.emit('playerJump');
 
             this.scene.tweens.add({
                 targets: this,
@@ -91,6 +92,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.setTint(0xff0000);
         
         this.scene.time.delayedCall(1000, () => {
+            this.scene.sound.play('damageSound');
             this.isInvulnerable = false;
             this.clearTint();
         }, [], this);

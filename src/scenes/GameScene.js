@@ -20,7 +20,7 @@ export class GameScene extends Phaser.Scene {
 
         // Seleccionar fondo según el nivel
         let bgKey = 'bg_nivel1';
-        let worldWidth = 2900; // Por defecto el nivel 1 medirá 3000 pixeles de largo
+        let worldWidth = 3000; // Por defecto el nivel 1 medirá 3000 pixeles de largo
         if (GameManager.state.level === 2) {
             bgKey = 'bg_nivel2';
             worldWidth = 3500; // El nivel 2 medirá 3500
@@ -186,6 +186,7 @@ export class GameScene extends Phaser.Scene {
         coin.disableBody(true, true); // En lugar de destroy(), las ocultamos visual y físicamente.
         GameManager.addScore(10);
         this.hud.updateHUD();
+        this.audioManager.playSound('coinSound');   
 
         // Validamos si aún quedan monedas vivas. disableBody apaga 'active'.
         if (this.coins.countActive(true) === 0 && GameManager.state.level < 3) {
