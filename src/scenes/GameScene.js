@@ -29,9 +29,21 @@ export class GameScene extends Phaser.Scene {
             worldWidth = 800; // El nivel del Jefe es de tamaño de pantalla (800)
         }
 
-        const bg = this.add.image(400, 300, bgKey);
-        bg.setDisplaySize(800, 600);
+        const bg = this.add.image(this.scale.width / 2, this.scale.height / 2, bgKey);
         bg.setScrollFactor(0);
+        bg.setOrigin(0.5);
+        bg.setDepth(-10);
+
+        const resizeBackground = () => {
+            const scaleX = this.scale.width / bg.width;
+            const scaleY = this.scale.height / bg.height;
+            const bgScale = Math.max(scaleX, scaleY);
+            bg.setScale(bgScale);
+            bg.setPosition(this.scale.width / 2, this.scale.height / 2);
+        };
+
+        resizeBackground();
+        this.scale.on('resize', resizeBackground);
 
         this.audioManager = new AudioManager(this);
         this.audioManager.playMusic('bgMusic', { loop: true, volume: 0.3 });
