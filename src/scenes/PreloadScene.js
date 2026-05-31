@@ -50,8 +50,6 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image('bloquesMadera', '/assets/imagenes/platmad.png');
         this.load.image('bloquesLava', '/assets/imagenes/plataformapiedra.png');
 
-        this.load.image('checkpoint', 'assets/imagenes/checkpoint.png');
-
 
         // Since we don't have real assets, we generate them procedurally for testing
         this.generateAssets();
@@ -79,14 +77,14 @@ export class PreloadScene extends Phaser.Scene {
         g.generateTexture('coin', 20, 20);
         g.clear();
         
-        // Ground/Platform (Green rectangle)
-        g.fillStyle(0x00ff00);
+        // Ground/Platform (invisible physical body used as floor)
+        g.fillStyle(0x000000, 0); // fully transparent
         g.fillRect(0, 0, 800, 32);
         g.generateTexture('ground', 800, 32);
         g.clear();
-        
-        // Platform (short)
-        g.fillStyle(0x00ff00);
+
+        // Platform (short) - invisible placeholder if needed
+        g.fillStyle(0x000000, 0); // fully transparent
         g.fillRect(0, 0, 100, 20);
         g.generateTexture('platform', 100, 20);
         g.clear();

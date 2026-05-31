@@ -29,9 +29,21 @@ export class GameScene extends Phaser.Scene {
             worldWidth = 1000; // El nivel del Jefe es de tamaño de pantalla (800)
         }
 
-        const bg = this.add.image(400, 300, bgKey);
-        bg.setDisplaySize(800, 600);
+        const bg = this.add.image(this.scale.width / 2, this.scale.height / 2, bgKey);
         bg.setScrollFactor(0);
+        bg.setOrigin(0.5);
+        bg.setDepth(-10);
+
+        const resizeBackground = () => {
+            const scaleX = this.scale.width / bg.width;
+            const scaleY = this.scale.height / bg.height;
+            const bgScale = Math.max(scaleX, scaleY);
+            bg.setScale(bgScale);
+            bg.setPosition(this.scale.width / 2, this.scale.height / 2);
+        };
+
+        resizeBackground();
+        this.scale.on('resize', resizeBackground);
 
         this.audioManager = new AudioManager(this);
         this.audioManager.playMusic('bgMusic', { loop: true, volume: 0.3 });
@@ -39,9 +51,9 @@ export class GameScene extends Phaser.Scene {
         this.createLevel();
         
         this.player = new Player(this, 50, 400);
-        this.physics.world.setBounds(0, 0, worldWidth, 600); // <-- Expandimos los límites de la física dinámicamente
+        this.physics.world.setBounds(0, 0, worldWidth, this.scale.height);
         this.cameras.main.startFollow(this.player, true, 0.05, 0.05);
-        this.cameras.main.setBounds(0, 0, worldWidth, 600);
+        this.cameras.main.setBounds(0, 0, worldWidth, this.scale.height);
 
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.enemies, this.platforms);
@@ -209,7 +221,7 @@ export class GameScene extends Phaser.Scene {
             enemy.update();
         });
 
-        if (this.player.y > 600) {
+        if (this.player.y > this.scale.height) {
             this.handlePlayerDeath();
         }
     }
