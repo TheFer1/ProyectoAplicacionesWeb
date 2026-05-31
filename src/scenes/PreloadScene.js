@@ -49,7 +49,8 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image('bloquesPlanta', '/assets/imagenes/bloquesplat.png');
         this.load.image('bloquesMadera', '/assets/imagenes/platmad.png');
         this.load.image('bloquesLava', '/assets/imagenes/plataformapiedra.png');
-
+        this.load.image('menu-bg', 'assets/imagenes/menu-bg.png');
+        this.load.image('victory-bg', 'assets/imagenes/victory-bg.png');
 
         // Since we don't have real assets, we generate them procedurally for testing
         this.generateAssets();
