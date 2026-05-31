@@ -26,7 +26,7 @@ export class GameScene extends Phaser.Scene {
             worldWidth = 3500; // El nivel 2 medirá 3500
         } else if (GameManager.state.level === 3) {
             bgKey = 'bg_nivel3';
-            worldWidth = 800; // El nivel del Jefe es de tamaño de pantalla (800)
+            worldWidth = 1000; // El nivel del Jefe es de tamaño de pantalla (800)
         }
 
         const bg = this.add.image(400, 300, bgKey);
