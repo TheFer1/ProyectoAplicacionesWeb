@@ -71,7 +71,7 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image('bloquesLava', '/assets/imagenes/plataformapiedra.png');
 
 
-        // Since we don't have real assets, we generate them procedurally for testing
+      
         this.generateAssets();
 
         // Cargar imagen real de checkpoint (si existe en public/assets/imagenes)
