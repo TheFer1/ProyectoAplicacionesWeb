@@ -1,4 +1,11 @@
 export default class PowerUp extends Phaser.Physics.Arcade.Sprite {
+    /**
+     * PowerUp
+     *
+     * Objeto de potenciador que pulsa para llamar la atención. No tiene
+     * gravedad y es inmóvil; la lógica de recolección se maneja con
+     * overlaps en la escena.
+     */
     constructor(scene, x, y) {
         super(scene, x, y, 'powerup');
         scene.add.existing(this);

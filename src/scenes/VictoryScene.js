@@ -1,11 +1,21 @@
 import StorageManager from '../managers/StorageManager.js';
 import GameManager from '../managers/GameManager.js';
 
+/**
+ * VictoryScene
+ *
+ * Muestra la pantalla de victoria al completar todos los niveles. Muestra
+ * el puntaje final y actualiza el récord si corresponde.
+ */
 export class VictoryScene extends Phaser.Scene {
     constructor() {
         super('VictoryScene');
     }
 
+    /**
+     * create()
+     * Construye la UI de victoria y ofrece volver al menú.
+     */
     create() {
         const { width, height } = this.scale;
 

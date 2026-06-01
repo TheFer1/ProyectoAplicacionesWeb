@@ -1,10 +1,20 @@
 import StorageManager from '../managers/StorageManager.js';
 
+/**
+ * PauseScene
+ *
+ * Escena superpuesta que muestra el estado de pausa, permite reanudar
+ * la partida o regresar al menú, y cambiar la configuración de audio.
+ */
 export class PauseScene extends Phaser.Scene {
     constructor() {
         super('PauseScene');
     }
 
+    /**
+     * create()
+     * Construye la UI de pausa y conecta las acciones a la escena de juego.
+     */
     create() {
         const { width, height } = this.scale;
 

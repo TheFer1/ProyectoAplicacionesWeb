@@ -1,8 +1,20 @@
+/**
+ * PreloadScene
+ *
+ * Escena encargada de cargar recursos (imágenes, audio) y generar
+ * texturas placeholder cuando falten assets reales. Muestra una barra de
+ * progreso mientras se cargan los recursos.
+ */
 export class PreloadScene extends Phaser.Scene {
     constructor() {
         super('PreloadScene');
     }
 
+    /**
+     * preload()
+     * Carga los assets principales y registra un callback para generar
+     * texturas placeholder al terminar la carga (si faltan recursos).
+     */
     preload() {
         const { width, height } = this.scale;
 
@@ -44,55 +56,75 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image('bloquesLava', '/assets/imagenes/plataformapiedra.png');
 
 
-        // Since we don't have real assets, we generate them procedurally for testing
-        this.generateAssets();
+        // Registrar generación de placeholders solo cuando termine la carga
+        // (evita sobrescribir texturas reales cargadas por `this.load`).
+        this.load.on('complete', () => this.generateAssets());
 
         // Cargar imagen real de checkpoint (si existe en public/assets/imagenes)
         this.load.image('checkpoint', 'assets/imagenes/checkpoint.png');
-
-        this.generateAssets();
     }
 
     create() {
         this.scene.start('MenuScene');
     }
     
+    /**
+     * generateAssets()
+     * Genera texturas placeholder solo si no existen ya en el atlas de
+     * texturas (evita sobreescribir imágenes reales).
+     */
     generateAssets() {
         const g = this.add.graphics();
-        
-        g.fillStyle(0xff0000);
-        g.fillRect(0, 0, 32, 32);
-        g.generateTexture('espina', 32, 32);
-        g.clear();
-        
-        g.fillStyle(0xffff00);
-        g.fillCircle(10, 10, 10);
-        g.generateTexture('coin', 20, 20);
-        g.clear();
-        
-        g.fillStyle(0x000000, 0);
-        g.fillRect(0, 0, 800, 32);
-        g.generateTexture('ground', 800, 32);
-        g.clear();
 
-        g.fillStyle(0x000000, 0);
-        g.fillRect(0, 0, 100, 20);
-        g.generateTexture('platform', 100, 20);
-        g.clear();
+        if (!this.textures.exists('espina')) {
+            g.fillStyle(0xff0000);
+            g.fillRect(0, 0, 32, 32);
+            g.generateTexture('espina', 32, 32);
+            g.clear();
+        }
 
-        g.fillStyle(0x00ffff);
-        g.fillRect(0, 0, 20, 60);
-        g.generateTexture('checkpoint-placeholder', 20, 60);
-        g.clear();
+        if (!this.textures.exists('coin')) {
+            g.fillStyle(0xffff00);
+            g.fillCircle(10, 10, 10);
+            g.generateTexture('coin', 20, 20);
+            g.clear();
+        }
 
-        g.fillStyle(0xff00ff);
-        g.fillTriangle(10, 0, 20, 10, 10, 20, 0, 10);
-        g.generateTexture('powerup', 20, 20);
-        g.clear();
+        if (!this.textures.exists('ground')) {
+            g.fillStyle(0x000000, 0);
+            g.fillRect(0, 0, 800, 32);
+            g.generateTexture('ground', 800, 32);
+            g.clear();
+        }
 
-        g.fillStyle(0xffd700);
-        g.fillRoundedRect(0, 0, 40, 60, 10);
-        g.generateTexture('goal', 40, 60);
-        g.clear();
+        if (!this.textures.exists('platform')) {
+            g.fillStyle(0x000000, 0);
+            g.fillRect(0, 0, 100, 20);
+            g.generateTexture('platform', 100, 20);
+            g.clear();
+        }
+
+        // Usamos la clave 'checkpoint' para mantener compatibilidad con
+        // el resto del código que busca esa textura.
+        if (!this.textures.exists('checkpoint')) {
+            g.fillStyle(0x00ffff);
+            g.fillRect(0, 0, 20, 60);
+            g.generateTexture('checkpoint', 20, 60);
+            g.clear();
+        }
+
+        if (!this.textures.exists('powerup')) {
+            g.fillStyle(0xff00ff);
+            g.fillTriangle(10, 0, 20, 10, 10, 20, 0, 10);
+            g.generateTexture('powerup', 20, 20);
+            g.clear();
+        }
+
+        if (!this.textures.exists('goal')) {
+            g.fillStyle(0xffd700);
+            g.fillRoundedRect(0, 0, 40, 60, 10);
+            g.generateTexture('goal', 40, 60);
+            g.clear();
+        }
     }
 }

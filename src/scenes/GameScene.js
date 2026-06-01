@@ -9,17 +9,31 @@ import GameManager from '../managers/GameManager.js';
 import AudioManager from '../managers/AudioManager.js';
 import StorageManager from '../managers/StorageManager.js';
 
+/**
+ * GameScene
+ *
+ * Escena principal de juego: controla la creación del nivel, jugador,
+ * enemigos, jefes, colisiones y la lógica de progreso entre niveles.
+ */
 export class GameScene extends Phaser.Scene {
     constructor() {
         super('GameScene');
     }
 
-    // Punto de entrada de Phaser: inicializa toda la escena.
+    /**
+     * create()
+     * Método de entrada de Phaser: arranca la inicialización completa de
+     * la escena delegando en `inicializarEscena()`.
+     */
     create() {
         this.inicializarEscena();
     }
 
-    // Prepara fondo, audio, jugador, colisiones y arranque del nivel actual.
+    /**
+     * inicializarEscena()
+     * Prepara fondo, audio, jugador, colisiones, HUD y configura el
+     * nivel actual según `GameManager.state.level`.
+     */
     inicializarEscena() {
         this.isTransitioning = false;
         this.cameras.main.fadeIn(800, 0, 0, 0);
@@ -85,7 +99,12 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-    // Crea plataformas, enemigos y objetos del nivel según la etapa actual.
+    /**
+     * configurarNivel()
+     * Crea grupos de plataformas, enemigos, monedas, checkpoints y
+     * potenciadores según el nivel actual. Reutiliza `Coin`, `Enemy`,
+     * `Checkpoint` y `PowerUp` para poblar el mapa.
+     */
     configurarNivel() {
         this.platforms = this.physics.add.staticGroup();
         this.enemies = this.physics.add.group();
@@ -198,7 +217,11 @@ export class GameScene extends Phaser.Scene {
 }
     }
 
-    // Crea y configura al jefe final del nivel 3.
+    /**
+     * crearJefeFinal()
+     * Configura al jefe del nivel 3: sprite, física, propiedades de vida
+     * y comportamiento básico de IA.
+     */
     crearJefeFinal() {
         this.boss = this.physics.add.sprite(800, 400, 'boss');
         // Escalamos al jefe de manera similar al jugador para que mida unos 120 pixeles de alto (puedes cambiar este 120 si lo quieres más grande/pequeño)
@@ -225,12 +248,19 @@ export class GameScene extends Phaser.Scene {
         this.physics.add.overlap(this.player, this.boss, this.golpearJefe, null, this);
     }
 
-    // Punto de entrada de Phaser: actualiza la lógica en cada frame.
+    /**
+     * update()
+     * Loop principal de actualización llamado por Phaser cada frame.
+     */
     update() {
         this.actualizarEscena();
     }
 
-    // Procesa movimiento, enemigos, jefe y caída del jugador.
+    /**
+     * actualizarEscena()
+     * Procesa entrada del jugador, actualiza enemigos, jefe y verifica
+     * condiciones de muerte o transición de nivel.
+     */
     actualizarEscena() {
         if (!this.player.active || this.isTransitioning) return;
 
@@ -249,7 +279,11 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-    // Controla el movimiento del jefe con persecución, saltos y límites internos.
+    /**
+     * actualizarJefeFinal()
+     * Lógica de IA del jefe: movimiento dentro del arena, decisiones aleatorias
+     * de persecución y saltos ocasionales.
+     */
     actualizarJefeFinal() {
         const now = this.time.now;
         const onGround = this.boss.body.blocked.down || this.boss.body.touching.down;
@@ -282,6 +316,11 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
+    /**
+     * handleBossPlatformCollision(boss, platform)
+     * Controla la colisión entre jefe y plataformas para permitir romper
+     * plataformas específicas del nivel 3.
+     */
     handleBossPlatformCollision(boss, platform) {
         if (!boss.active || !platform.active) return;
 
@@ -305,7 +344,11 @@ export class GameScene extends Phaser.Scene {
         boss.setVelocityY(-220);
     }
 
-    // Gestiona la recolección de monedas y el progreso del nivel.
+    /**
+     * recogerMoneda(player, coin)
+     * Maneja la recolección de una moneda: oculta el objeto, suma puntos
+     * y comprueba si hay que iniciar la transición de nivel.
+     */
     recogerMoneda(player, coin) {
         coin.disableBody(true, true); // En lugar de destroy(), las ocultamos visual y físicamente.
         GameManager.addScore(10);
@@ -318,7 +361,11 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-    // Activa un checkpoint y guarda el progreso del jugador.
+    /**
+     * activarCheckpoint(player, checkpoint)
+     * Activa el checkpoint tocado por el jugador, guarda el punto de
+     * respawn y persiste el nivel actual.
+     */
     activarCheckpoint(player, checkpoint) {
         if (checkpoint.activate()) {
             this.spawnPoint = { x: checkpoint.x, y: checkpoint.y };
@@ -335,7 +382,10 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-    // Otorga el poder temporal al jugador.
+    /**
+     * recogerPotenciador(player, powerup)
+     * Aplica el efecto del potenciador al jugador y añade puntos.
+     */
     recogerPotenciador(player, powerup) {
         powerup.destroy();
         GameManager.state.hasPowerUp = true;
@@ -344,7 +394,10 @@ export class GameScene extends Phaser.Scene {
         this.hud.updateHUD();
     }
 
-    // Resuelve el contacto con un enemigo: daño o salto sobre él.
+    /**
+     * colisionarConEnemigo(player, enemy)
+     * Determina si el jugador pisa al enemigo (lo elimina) o recibe daño.
+     */
     colisionarConEnemigo(player, enemy) {
         if (player.body.velocity.y > 0 && player.y < enemy.y - 10) {
             enemy.destroy();
@@ -356,7 +409,11 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-    // Resuelve el contacto con el jefe final y su sistema de vida.
+    /**
+     * golpearJefe(player, boss)
+     * Maneja el daño que el jugador puede infligir al jefe y las fases
+     * de cambio de comportamiento del mismo.
+     */
     golpearJefe(player, boss) {
         if (player.body.velocity.y > 0 && player.y < boss.y - 20) {
             this.bossHealth -= 20;
@@ -388,7 +445,10 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-    // Inicia la transición para pasar al siguiente nivel.
+    /**
+     * iniciarTransicionDeNivel()
+     * Realiza la animación/fade y prepara el avance al siguiente nivel.
+     */
     iniciarTransicionDeNivel() {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
@@ -404,7 +464,11 @@ export class GameScene extends Phaser.Scene {
         });
     }
 
-    // Aplica daño al jugador y decide si pierde el poder o una vida.
+    /**
+     * procesarDañoJugador()
+     * Aplica el flujo de daño: si el jugador tiene potenciador lo pierde,
+     * en caso contrario se procesa la muerte.
+     */
     procesarDañoJugador() {
         if (this.player.takeDamage()) {
             if (GameManager.state.hasPowerUp) {
@@ -416,8 +480,12 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-    // Gestiona la muerte del jugador y reinicia o termina la partida.
-manejarMuerteJugador() {
+    /**
+     * manejarMuerteJugador()
+     * Controla la lógica al morir: decrementa vidas, reinicia la escena o
+     * muestra la pantalla de Game Over.
+     */
+    manejarMuerteJugador() {
     if (this.isTransitioning) return;
     this.isTransitioning = true;
     GameManager.loseLife();
@@ -433,7 +501,12 @@ manejarMuerteJugador() {
     });
 }
 
-avanzarAlSiguienteNivel() {
+    /**
+     * avanzarAlSiguienteNivel()
+     * Si no hay más niveles muestra la escena de victoria, si no incrementa
+     * el nivel y reinicia `GameScene`.
+     */
+    avanzarAlSiguienteNivel() {
     if (GameManager.state.level >= 3) {
         this.sound.stopAll();
         this.scene.start('VictoryScene');

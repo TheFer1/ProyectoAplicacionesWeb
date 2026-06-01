@@ -10,14 +10,17 @@ export default class Checkpoint extends Phaser.Physics.Arcade.Sprite {
 
         this.body.setAllowGravity(false);
         this.body.setImmovable(true);
-        this.active = false;
-        
-        this.setTint(0x888888); // Inactive state tint
+        // No use `active` (propiedad controlada por Phaser). Usamos
+        // `activated` para la lógica de juego y así evitar deshabilitar
+        // el objeto en el motor físico.
+        this.activated = false;
+
+        this.setTint(0x888888); // Tinte para estado inactivo
     }
     
     activate() {
-        if (!this.active) {
-            this.active = true;
+        if (!this.activated) {
+            this.activated = true;
             this.clearTint();
             return true;
         }

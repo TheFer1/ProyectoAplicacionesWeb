@@ -66,10 +66,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.setVelocityY(-400);
             this.jumpCount++;
             this.scene.sound.play('jumpSound');
-
             if (mobileControls) {
+                // Acceder a la propiedad getter `clearJump` para consumir
+                // el evento táctil de salto en dispositivos móviles.
                 mobileControls.clearJump;
-                this
             }
             
 

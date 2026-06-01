@@ -1,4 +1,11 @@
 export default class Enemy extends Phaser.Physics.Arcade.Sprite {
+    /**
+     * Enemy
+     *
+     * Enemigo con movimiento patrulla y saltos ocasionales. Se inicializa
+     * con un rango de patrulla y velocidad, y ajusta su cuerpo físico
+     * para adaptarse al escalado.
+     */
     constructor(scene, x, y, range = 100) {
         super(scene, x, y, 'enemy');
         scene.add.existing(this);
@@ -30,6 +37,7 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
 
     setDirection(direction) {
+        /** Cambia la dirección horizontal del enemigo */
         this.direction = direction;
         this.setVelocityX(this.speed * this.direction);
         this.setFlipX(this.direction < 0);

@@ -1,11 +1,21 @@
 import StorageManager from '../managers/StorageManager.js';
 import GameManager from '../managers/GameManager.js';
 
+/**
+ * GameOverScene
+ *
+ * Pantalla que muestra el puntaje final y, si procede, indica un nuevo
+ * récord. Permite reiniciar la partida volviendo al menú principal.
+ */
 export class GameOverScene extends Phaser.Scene {
     constructor() {
         super('GameOverScene');
     }
 
+    /**
+     * create()
+     * Construye la pantalla de Game Over y maneja reinicio.
+     */
     create() {
         const { width, height } = this.scale;
 

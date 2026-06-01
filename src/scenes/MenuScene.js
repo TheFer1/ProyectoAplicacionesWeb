@@ -1,11 +1,21 @@
 import StorageManager from '../managers/StorageManager.js';
 import GameManager from '../managers/GameManager.js';
 
+/**
+ * MenuScene
+ *
+ * Pantalla principal del juego con opciones para empezar, continuar y
+ * alternar el audio. Muestra botones con interacciones táctiles/ratón.
+ */
 export class MenuScene extends Phaser.Scene {
     constructor() {
         super('MenuScene');
     }
 
+    /**
+     * create()
+     * Construye la UI del menú: fondo, panel de botones y manejo de audio.
+     */
     create() {
         const { width, height } = this.scale;
 
