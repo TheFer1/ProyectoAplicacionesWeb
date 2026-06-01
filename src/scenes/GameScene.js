@@ -14,7 +14,13 @@ export class GameScene extends Phaser.Scene {
         super('GameScene');
     }
 
+    // Punto de entrada de Phaser: inicializa toda la escena.
     create() {
+        this.inicializarEscena();
+    }
+
+    // Prepara fondo, audio, jugador, colisiones y arranque del nivel actual.
+    inicializarEscena() {
         this.isTransitioning = false;
         this.cameras.main.fadeIn(800, 0, 0, 0);
 
@@ -26,7 +32,7 @@ export class GameScene extends Phaser.Scene {
             worldWidth = 3500; // El nivel 2 medirá 3500
         } else if (GameManager.state.level === 3) {
             bgKey = 'bg_nivel3';
-            worldWidth = 1000; // El nivel del Jefe es de tamaño de pantalla (800)
+            worldWidth = 2400; // Nivel 3 ampliado para evitar el tope derecho
         }
 
         const bg = this.add.image(this.scale.width / 2, this.scale.height / 2, bgKey);
@@ -48,7 +54,7 @@ export class GameScene extends Phaser.Scene {
         this.audioManager = new AudioManager(this);
         this.audioManager.playMusic('bgMusic', { loop: true, volume: 0.3 });
 
-        this.createLevel();
+        this.configurarNivel();
         
         this.player = new Player(this, 50, 400);
         this.physics.world.setBounds(0, 0, worldWidth, this.scale.height);
@@ -58,10 +64,10 @@ export class GameScene extends Phaser.Scene {
         this.physics.add.collider(this.player, this.platforms);
         this.physics.add.collider(this.enemies, this.platforms);
         
-        this.physics.add.overlap(this.player, this.coins, this.collectCoin, null, this);
-        this.physics.add.overlap(this.player, this.checkpoints, this.hitCheckpoint, null, this);
-        this.physics.add.overlap(this.player, this.powerups, this.collectPowerUp, null, this);
-        this.physics.add.overlap(this.player, this.enemies, this.hitEnemy, null, this);
+        this.physics.add.overlap(this.player, this.coins, this.recogerMoneda, null, this);
+        this.physics.add.overlap(this.player, this.checkpoints, this.activarCheckpoint, null, this);
+        this.physics.add.overlap(this.player, this.powerups, this.recogerPotenciador, null, this);
+        this.physics.add.overlap(this.player, this.enemies, this.colisionarConEnemigo, null, this);
 
         this.hud = new HUD(this);
         this.mobileControls = new MobileControls(this);
@@ -75,11 +81,12 @@ export class GameScene extends Phaser.Scene {
             });
 
         if (GameManager.state.level === 3) {
-            this.createBoss();
+            this.crearJefeFinal();
         }
     }
 
-    createLevel() {
+    // Crea plataformas, enemigos y objetos del nivel según la etapa actual.
+    configurarNivel() {
         this.platforms = this.physics.add.staticGroup();
         this.enemies = this.physics.add.group();
         this.coins = this.physics.add.group({ allowGravity: false });
@@ -92,6 +99,7 @@ export class GameScene extends Phaser.Scene {
         let groundTiles = 1; // Para el nivel 3 (Jefe) solo 1 piso de 800
         if (level === 1) groundTiles = 4; // Suelo hasta 3200
         if (level === 2) groundTiles = 5; // Suelo hasta 4000
+        if (level === 3) groundTiles = 3; // Suelo hasta 2400 para cubrir todo el nivel
         
         for (let i = 0; i < groundTiles; i++) {
             this.platforms.create(400 + (i * 800), 584, 'ground');
@@ -157,27 +165,41 @@ export class GameScene extends Phaser.Scene {
             this.checkpoints.add(new Checkpoint(this, 2400, 530));
 
         } else if (level === 3) {
+            const plataformas = [
+                { x: 180, y: 460, w: 120, h: 20 },
+                { x: 320, y: 360, w: 120, h: 20 },
+                { x: 600, y: 320, w: 120, h: 20 },
+                { x: 740, y: 420, w: 120, h: 20 },
+                { x: 860, y: 300, w: 120, h: 20 },
+                { x: 1260, y: 340, w: 120, h: 20 },
+                { x: 1460, y: 460, w: 120, h: 20 },
+                { x: 1900, y: 430, w: 120, h: 20 },
+                { x: 2120, y: 300, w: 120, h: 20 }
+            ];
 
-    const plataformas = [
-        { x: 350, y: 350 },
-        { x: 550, y: 450 },
-        { x: 750, y: 350 }
-    ];
+            plataformas.forEach(pos => {
+                const p = this.platforms.create(pos.x, pos.y, 'bloquesLava');
+                p.setDisplaySize(pos.w, pos.h);
+                p.refreshBody();
+            });
 
-    plataformas.forEach(pos => {
-        const p = this.platforms.create(
-            pos.x,
-            pos.y,
-            'bloquesLava'
-        );
-
-        p.setDisplaySize(100, 20);
-        p.refreshBody();
-    });
+            this.coins.add(new Coin(this, 180, 410));
+            this.coins.add(new Coin(this, 320, 310));
+            this.coins.add(new Coin(this, 460, 410));
+            this.coins.add(new Coin(this, 600, 270));
+            this.coins.add(new Coin(this, 740, 370));
+            this.coins.add(new Coin(this, 860, 250));
+            this.coins.add(new Coin(this, 1040, 390));
+            this.coins.add(new Coin(this, 1260, 290));
+            this.coins.add(new Coin(this, 1460, 410));
+            this.coins.add(new Coin(this, 1680, 270));
+            this.coins.add(new Coin(this, 1900, 380));
+            this.coins.add(new Coin(this, 2120, 250));
 }
     }
 
-    createBoss() {
+    // Crea y configura al jefe final del nivel 3.
+    crearJefeFinal() {
         this.boss = this.physics.add.sprite(800, 400, 'boss');
         // Escalamos al jefe de manera similar al jugador para que mida unos 120 pixeles de alto (puedes cambiar este 120 si lo quieres más grande/pequeño)
         const bossScale = 120 / this.boss.height;
@@ -188,31 +210,28 @@ export class GameScene extends Phaser.Scene {
         this.boss.body.setOffset(this.boss.width * 0.1, this.boss.height * 0.2);
 
         this.boss.setCollideWorldBounds(true);
-        this.physics.add.collider(this.boss, this.platforms);
+        this.physics.add.collider(this.boss, this.platforms, this.handleBossPlatformCollision, null, this);
         this.bossHealth = 100;
         this.bossPhase = 1;
+        this.bossDirection = Phaser.Math.Between(0, 1) ? 1 : -1;
+        this.bossSpeed = 120;
+        this.bossArenaMinX = 170;
+        this.bossArenaMaxX = 870;
+        this.bossLastPlatformBreak = 0;
+        this.nextBossDecision = this.time.now + Phaser.Math.Between(1000, 1800);
+        this.nextBossJump = this.time.now + Phaser.Math.Between(1400, 2600);
         
         this.bossText = this.add.text(400, 50, 'BOSS: 100%', { fontSize: '24px', fill: '#f00' }).setOrigin(0.5).setScrollFactor(0);
-        this.physics.add.overlap(this.player, this.boss, this.hitBoss, null, this);
-        
-        this.time.addEvent({
-            delay: 2000,
-            callback: () => {
-                if (!this.boss || !this.boss.active) return;
-                
-                if (Phaser.Math.Between(0, 1) === 0) {
-                    this.boss.setVelocityY(-400);
-                    const dir = this.player.x < this.boss.x ? -150 : 150;
-                    this.boss.setVelocityX(dir);
-                } else {
-                    this.boss.setVelocityX(0);
-                }
-            },
-            loop: true
-        });
+        this.physics.add.overlap(this.player, this.boss, this.golpearJefe, null, this);
     }
 
+    // Punto de entrada de Phaser: actualiza la lógica en cada frame.
     update() {
+        this.actualizarEscena();
+    }
+
+    // Procesa movimiento, enemigos, jefe y caída del jugador.
+    actualizarEscena() {
         if (!this.player.active || this.isTransitioning) return;
 
         this.player.update(this.mobileControls);
@@ -221,12 +240,73 @@ export class GameScene extends Phaser.Scene {
             enemy.update();
         });
 
+        if (this.boss && this.boss.active) {
+            this.actualizarJefeFinal();
+        }
+
         if (this.player.y > this.scale.height) {
-            this.handlePlayerDeath();
+            this.manejarMuerteJugador();
         }
     }
 
-    collectCoin(player, coin) {
+    // Controla el movimiento del jefe con persecución, saltos y límites internos.
+    actualizarJefeFinal() {
+        const now = this.time.now;
+        const onGround = this.boss.body.blocked.down || this.boss.body.touching.down;
+        const chasePlayer = Phaser.Math.Between(0, 100) < 55;
+
+        if (this.boss.x <= this.bossArenaMinX) {
+            this.bossDirection = 1;
+        } else if (this.boss.x >= this.bossArenaMaxX) {
+            this.bossDirection = -1;
+        } else if (now > this.nextBossDecision) {
+            if (chasePlayer) {
+                this.bossDirection = this.player.x < this.boss.x ? -1 : 1;
+            } else if (Phaser.Math.Between(0, 1)) {
+                this.bossDirection *= -1;
+            }
+
+            this.nextBossDecision = now + Phaser.Math.Between(1000, 1800);
+        }
+
+        this.boss.setVelocityX(this.bossSpeed * this.bossDirection);
+        this.boss.setFlipX(this.bossDirection < 0);
+
+        if (onGround && now > this.nextBossJump && Phaser.Math.Between(0, 100) < 35) {
+            this.boss.setVelocityY(-360);
+            this.nextBossJump = now + Phaser.Math.Between(1400, 2600);
+        }
+
+        if (this.bossPhase === 2) {
+            this.bossSpeed = 170;
+        }
+    }
+
+    handleBossPlatformCollision(boss, platform) {
+        if (!boss.active || !platform.active) return;
+
+        // Solo romper las plataformas del nivel 3, no el suelo base.
+        if (platform.texture && platform.texture.key !== 'bloquesLava') return;
+
+        const now = this.time.now;
+        const bossBody = boss.body;
+
+        // Romper solo cuando el boss cae o aterriza encima.
+        if (!bossBody || !(bossBody.blocked.down || bossBody.touching.down) || bossBody.velocity.y < 0) {
+            return;
+        }
+
+        if (now - this.bossLastPlatformBreak < 700) {
+            return;
+        }
+
+        this.bossLastPlatformBreak = now;
+        platform.destroy();
+        boss.setVelocityY(-220);
+    }
+
+    // Gestiona la recolección de monedas y el progreso del nivel.
+    recogerMoneda(player, coin) {
         coin.disableBody(true, true); // En lugar de destroy(), las ocultamos visual y físicamente.
         GameManager.addScore(10);
         this.hud.updateHUD();
@@ -234,11 +314,12 @@ export class GameScene extends Phaser.Scene {
 
         // Validamos si aún quedan monedas vivas. disableBody apaga 'active'.
         if (this.coins.countActive(true) === 0 && GameManager.state.level < 3) {
-            this.completeLevelTransition();
+            this.iniciarTransicionDeNivel();
         }
     }
 
-    hitCheckpoint(player, checkpoint) {
+    // Activa un checkpoint y guarda el progreso del jugador.
+    activarCheckpoint(player, checkpoint) {
         if (checkpoint.activate()) {
             this.spawnPoint = { x: checkpoint.x, y: checkpoint.y };
             GameManager.addScore(50);
@@ -254,7 +335,8 @@ export class GameScene extends Phaser.Scene {
         }
     }
 
-    collectPowerUp(player, powerup) {
+    // Otorga el poder temporal al jugador.
+    recogerPotenciador(player, powerup) {
         powerup.destroy();
         GameManager.state.hasPowerUp = true;
         this.player.setTint(0x00ffff);
@@ -262,18 +344,20 @@ export class GameScene extends Phaser.Scene {
         this.hud.updateHUD();
     }
 
-    hitEnemy(player, enemy) {
+    // Resuelve el contacto con un enemigo: daño o salto sobre él.
+    colisionarConEnemigo(player, enemy) {
         if (player.body.velocity.y > 0 && player.y < enemy.y - 10) {
             enemy.destroy();
             player.setVelocityY(-350); 
             GameManager.addScore(20);
             this.hud.updateHUD();
         } else {
-            this.handlePlayerDamage();
+            this.procesarDañoJugador();
         }
     }
 
-    hitBoss(player, boss) {
+    // Resuelve el contacto con el jefe final y su sistema de vida.
+    golpearJefe(player, boss) {
         if (player.body.velocity.y > 0 && player.y < boss.y - 20) {
             this.bossHealth -= 20;
             player.setVelocityY(-400); 
@@ -293,18 +377,19 @@ export class GameScene extends Phaser.Scene {
                 GameManager.addScore(1000);
                 
                 this.time.delayedCall(1000, () => {
-                    this.completeLevelTransition();
+                    this.iniciarTransicionDeNivel();
                 });
             } else if (this.bossHealth <= 50 && this.bossPhase === 1) {
                 this.bossPhase = 2;
                 boss.setTint(0xff00ff); 
             }
         } else {
-            this.handlePlayerDamage();
+            this.procesarDañoJugador();
         }
     }
 
-    completeLevelTransition() {
+    // Inicia la transición para pasar al siguiente nivel.
+    iniciarTransicionDeNivel() {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
         
@@ -315,22 +400,24 @@ export class GameScene extends Phaser.Scene {
 
         this.cameras.main.fadeOut(1200, 0, 0, 0);
         this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
-            this.nextLevel();
+            this.avanzarAlSiguienteNivel();
         });
     }
 
-    handlePlayerDamage() {
+    // Aplica daño al jugador y decide si pierde el poder o una vida.
+    procesarDañoJugador() {
         if (this.player.takeDamage()) {
             if (GameManager.state.hasPowerUp) {
                 GameManager.state.hasPowerUp = false;
                 this.player.clearTint();
             } else {
-                this.handlePlayerDeath();
+                this.manejarMuerteJugador();
             }
         }
     }
 
-    handlePlayerDeath() {
+    // Gestiona la muerte del jugador y reinicia o termina la partida.
+    manejarMuerteJugador() {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
         GameManager.loseLife();
@@ -345,7 +432,8 @@ export class GameScene extends Phaser.Scene {
         });
     }
 
-    nextLevel() {
+    // Avanza al siguiente nivel o muestra la pantalla de victoria.
+    avanzarAlSiguienteNivel() {
         if (GameManager.state.level >= 3) {
             this.scene.start('VictoryScene'); 
         } else {

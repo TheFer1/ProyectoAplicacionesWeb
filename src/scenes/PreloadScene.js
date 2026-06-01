@@ -43,7 +43,13 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image('bg_nivel2', 'assets/imagenes/Escenario2.jpg');
         this.load.image('bg_nivel3', 'assets/imagenes/Escenario3.png');
 
+        // Fondo del menú
+        this.load.image('menu-bg', 'assets/imagenes/menu-bg.png');
+        this.load.image('victory-bg', 'assets/imagenes/victory-bg.png');
         this.load.image('espina', 'assets/imagenes/espinas.png');
+
+        // Enemigo (imagen real)
+        this.load.image('enemy', 'assets/imagenes/enemis.png');
 
         // bloques y plataformas
         this.load.image('bloquesPlanta', '/assets/imagenes/bloquesplat.png');
@@ -53,6 +59,9 @@ export class PreloadScene extends Phaser.Scene {
 
         // Since we don't have real assets, we generate them procedurally for testing
         this.generateAssets();
+
+        // Cargar imagen real de checkpoint (si existe en public/assets/imagenes)
+        this.load.image('checkpoint', 'assets/imagenes/checkpoint.png');
     }
 
     create() {
@@ -92,7 +101,7 @@ export class PreloadScene extends Phaser.Scene {
         // Checkpoint (Flag)
         g.fillStyle(0x00ffff);
         g.fillRect(0, 0, 20, 60);
-        g.generateTexture('checkpoint', 20, 60);
+        g.generateTexture('checkpoint-placeholder', 20, 60);
         g.clear();
 
         // PowerUp (Magenta Diamond)

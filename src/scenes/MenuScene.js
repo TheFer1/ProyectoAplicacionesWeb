@@ -18,9 +18,9 @@ export class MenuScene extends Phaser.Scene {
         // Panel botones derecha
         const panelX = width * 0.78;
         const panelY = height * 0.5;
-        const btnW = 280;
-        const btnH = 52;
-        const gap = 65;
+        const btnW = 220;
+        const btnH = 44;
+        const gap = 52;
 
         // Fondo panel
         this.add.rectangle(panelX, panelY - gap * 0.5, btnW + 24, btnH * 3 + gap * 2 + 20, 0x0a0500, 0.75)
@@ -32,7 +32,7 @@ export class MenuScene extends Phaser.Scene {
                 .setInteractive({ useHandCursor: true });
             const txt = this.add.text(panelX, y, label, {
                 fontFamily: 'Arial Black',
-                fontSize: '16px',
+                    fontSize: '14px',
                 color: '#ffffff',
                 stroke: '#000',
                 strokeThickness: 3

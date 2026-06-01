@@ -4,6 +4,10 @@ export default class Checkpoint extends Phaser.Physics.Arcade.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
+        // Reducir tamaño visual y ajustar cuerpo físico
+        this.setScale(0.4);
+        this.body.setSize(this.displayWidth, this.displayHeight);
+
         this.body.setAllowGravity(false);
         this.body.setImmovable(true);
         this.active = false;

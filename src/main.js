@@ -1,6 +1,5 @@
 import Phaser from 'phaser';
 
-import { BootScene } from './scenes/BootScene.js';
 import { PreloadScene } from './scenes/PreloadScene.js';
 import { MenuScene } from './scenes/MenuScene.js';
 import { GameScene } from './scenes/GameScene.js';
@@ -27,7 +26,6 @@ const config = {
         }
     },
     scene: [
-        BootScene,
         PreloadScene,
         MenuScene,
         GameScene,

@@ -1,6 +1,6 @@
 export default class Enemy extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, range = 100) {
-        super(scene, x, y, 'espina');
+        super(scene, x, y, 'enemy');
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
@@ -8,20 +8,55 @@ export default class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.startX = x;
         this.range = range;
         this.speed = 50;
+        this.direction = Phaser.Math.Between(0, 1) ? 1 : -1;
         
-        this.setVelocityX(this.speed);
+        // Scale down visual size
+        this.setScale(0.4);
+
+        // Adjust physics body to match scaled sprite
+        this.body.setSize(this.displayWidth, this.displayHeight);
+
+        this.setVelocityX(this.speed * this.direction);
+        this.setFlipX(this.direction < 0);
+
+        // Jump timing
+        this.nextJump = 0;
+        this.jumpIntervalMin = 1200;
+        this.jumpIntervalMax = 2400;
+        this.jumpVelocity = -220;
+
+        // Random direction timing
+        this.nextDirectionChange = this.scene.time.now + Phaser.Math.Between(900, 2200);
+    }
+
+    setDirection(direction) {
+        this.direction = direction;
+        this.setVelocityX(this.speed * this.direction);
+        this.setFlipX(this.direction < 0);
     }
 
     update() {
         if (!this.body) return; // Prevent errors if destroyed
         
         if (this.x > this.startX + this.range) {
-            this.setVelocityX(-this.speed);
+            this.setDirection(-1);
         } else if (this.x < this.startX - this.range) {
-            this.setVelocityX(this.speed);
+            this.setDirection(1);
         }
 
-        // Animación de rotación constante
-        this.angle += (this.body.velocity.x > 0 ? 4 : -4);
+        const now = this.scene.time.now;
+        const onGround = this.body.blocked.down || this.body.touching.down;
+        if (onGround && now > this.nextDirectionChange) {
+            if (Phaser.Math.Between(0, 1)) {
+                this.setDirection(this.direction * -1);
+            }
+            this.nextDirectionChange = now + Phaser.Math.Between(900, 2200);
+        }
+
+        // Saltos ocasionales mientras se mueven
+        if (onGround && now > this.nextJump) {
+            this.setVelocityY(this.jumpVelocity);
+            this.nextJump = now + Phaser.Math.Between(this.jumpIntervalMin, this.jumpIntervalMax);
+        }
     }
 }
