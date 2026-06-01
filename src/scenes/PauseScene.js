@@ -5,6 +5,13 @@ export class PauseScene extends Phaser.Scene {
         super('PauseScene');
     }
 
+    /**
+     * create()
+     *
+     * Dibuja una superposición semitransparente y botones para reanudar
+     * la partida o volver al menú. Al reanudar, se detiene la escena de
+     * pausa y se reanuda `GameScene`.
+     */
     create() {
         const { width, height } = this.scale;
 

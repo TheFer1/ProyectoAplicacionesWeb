@@ -1,11 +1,25 @@
 import StorageManager from '../managers/StorageManager.js';
 import GameManager from '../managers/GameManager.js';
 
+/**
+ * MenuScene
+ *
+ * Escena principal del menú que permite comenzar la partida, continuar
+ * desde el último nivel guardado y alternar la configuración de audio.
+ */
 export class MenuScene extends Phaser.Scene {
     constructor() {
         super('MenuScene');
     }
 
+    /**
+     * create()
+     *
+     * Crea la interfaz del menú: fondo, panel de botones y botones
+     * interactivos. Se usa `StorageManager` para recuperar configuraciones
+     * previas (último nivel, audio) y `GameManager` para inicializar o
+     * continuar la partida.
+     */
     create() {
         const { width, height } = this.scale;
 
@@ -36,6 +50,13 @@ export class MenuScene extends Phaser.Scene {
         this.add.rectangle(panelX, panelY - gap * 0.5, btnW + 24, btnH * 3 + gap * 2 + 20, 0x0a0500, 0.75)
             .setStrokeStyle(3, 0xc8a000);
 
+        /**
+         * makeBtn(y, label, color, callback)
+         *
+         * Helper interno que crea un botón rectangular con texto y
+         * comportamiento interactivo (hover, click). Devuelve el fondo
+         * y el texto para permitir actualizaciones posteriores.
+         */
         const makeBtn = (y, label, color, callback) => {
             const bg = this.add.rectangle(panelX, y, btnW, btnH, color)
                 .setStrokeStyle(2, 0xc8a000)
