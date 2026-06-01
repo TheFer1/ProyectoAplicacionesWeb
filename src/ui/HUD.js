@@ -20,6 +20,14 @@ export default class HUD {
         this.scoreText.setText(`Score: ${GameManager.state.score}`);
         this.livesText.setText(`Lives: ${GameManager.state.lives}`);
         this.levelText.setText(`Level: ${GameManager.state.level}`);
-        this.highScoreText.setText(`High Score: ${StorageManager.getHighScore()}`);
+        this.highScoreText.setText(`High Score: ${StorageManager.getHighScore()}`
+    );
     }
+
+    resize() {
+    const { width } = this.scene.scale;
+
+    this.levelText.setPosition(width / 2, 20);
+    this.highScoreText.setPosition(width - 20, 20);
+}
 }
