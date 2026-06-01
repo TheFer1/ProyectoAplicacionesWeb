@@ -1,7 +1,3 @@
-// VictoryScene
-// Muestra la pantalla de victoria con el puntaje final y registra el
-// high score si corresponde. Ofrece un botón para volver al menú.
-
 import StorageManager from '../managers/StorageManager.js';
 import GameManager from '../managers/GameManager.js';
 
@@ -10,12 +6,6 @@ export class VictoryScene extends Phaser.Scene {
         super('VictoryScene');
     }
 
-    /**
-     * create()
-     *
-     * Dibuja el fondo de victoria, muestra el puntaje final y un botón
-     * para regresar al menú. Guarda el récord si se superó el high score.
-     */
     create() {
         const { width, height } = this.scale;
 
