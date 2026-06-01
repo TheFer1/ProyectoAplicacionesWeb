@@ -27,14 +27,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         });
     }
 
-    /**
-     * update(mobileControls)
-     *
-     * Lógica de control por frame para el jugador. Lee entrada por teclado
-     * (flechas o WASD) y controles móviles si están disponibles. Maneja
-     * movimiento horizontal, saltos dobles, animaciones simples de escala
-     * y efectos sonoros.
-     */
     update(mobileControls) {
         if (!this.active) return;
 
@@ -76,11 +68,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.scene.sound.play('jumpSound');
 
             if (mobileControls) {
-                // Clear the 'just pressed' flag from mobile controls so the
-                // jump isn't retriggered repeatedly. `clearJump` is
-                // implemented as a getter in `MobileControls` that resets
-                // `jumpJustPressed`.
                 mobileControls.clearJump;
+                this
             }
             
 

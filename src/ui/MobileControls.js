@@ -1,8 +1,3 @@
-// MobileControls.js
-// Crea controles táctiles simples para dispositivos móviles: botones de
-// izquierda, derecha y salto. Proporciona un estado que puede ser consultado
-// por `Player.update()` para integrar input táctil.
-
 export default class MobileControls {
     constructor(scene) {
         this.scene = scene;
@@ -13,13 +8,6 @@ export default class MobileControls {
         }
     }
 
-    /**
-     * createControls()
-     *
-     * Crea los elementos visuales (rectángulos y textos) que actúan como
-     * botones táctiles y conecta eventos pointer para actualizar el estado
-     * (`left`, `right`, `jump`, `jumpJustPressed`).
-     */
     createControls() {
         const { width, height } = this.scene.sys.game.config;
 
@@ -38,7 +26,7 @@ export default class MobileControls {
             .setScrollFactor(0);
         this.scene.add.text(width - 50, height - 50, '^', { fontSize: '24px' }).setOrigin(0.5).setScrollFactor(0);
 
-        // Estado de los controles
+        // State
         this.left = false;
         this.right = false;
         this.jump = false;
@@ -57,13 +45,6 @@ export default class MobileControls {
         this.jumpBtn.on('pointerout', () => { this.jump = false; this.jumpJustPressed = false; });
     }
 
-    /**
-     * clearJump
-     *
-     * Getter diseñado para limpiar la bandera `jumpJustPressed` cuando el
-     * salto ya fue procesado por el `Player`. Se usa accediendo a
-     * `mobileControls.clearJump` desde el código del jugador.
-     */
     get clearJump() {
         this.jumpJustPressed = false;
     }

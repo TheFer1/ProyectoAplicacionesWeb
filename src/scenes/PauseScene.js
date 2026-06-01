@@ -1,18 +1,10 @@
-// PauseScene.js
-// Escena de pausa sencilla: muestra opciones para reanudar o salir al menú.
+import StorageManager from '../managers/StorageManager.js';
 
 export class PauseScene extends Phaser.Scene {
     constructor() {
         super('PauseScene');
     }
 
-    /**
-     * create()
-     *
-     * Dibuja una superposición semitransparente y botones para reanudar
-     * la partida o volver al menú. Al reanudar, se detiene la escena de
-     * pausa y se reanuda `GameScene`.
-     */
     create() {
         const { width, height } = this.scale;
 
@@ -24,7 +16,7 @@ export class PauseScene extends Phaser.Scene {
             fontStyle: 'bold'
         }).setOrigin(0.5);
 
-        this.add.text(width / 2, height / 2, 'Resume', { fontSize: '32px', fill: '#0f0' })
+        this.add.text(width / 2, height / 2 - 40, 'Resume', { fontSize: '32px', fill: '#0f0' })
             .setOrigin(0.5)
             .setInteractive()
             .on('pointerdown', () => {
@@ -32,10 +24,30 @@ export class PauseScene extends Phaser.Scene {
                 this.scene.stop();
             });
 
-        this.add.text(width / 2, height / 2 + 60, 'Quit to Menu', { fontSize: '32px', fill: '#f00' })
+        const audioLabel = () => `🔊 Audio: ${StorageManager.getAudioConfig() ? 'ON' : 'OFF'}`;
+        const audioText = this.add.text(width / 2, height / 2 + 30, audioLabel(), {
+            fontSize: '28px',
+            fill: '#ffdd00'
+        })
             .setOrigin(0.5)
             .setInteractive()
             .on('pointerdown', () => {
+                const nuevoEstado = !StorageManager.getAudioConfig();
+                const gameScene = this.scene.get('GameScene');
+                if (gameScene && gameScene.audioManager) {
+                    gameScene.audioManager.setEnabled(nuevoEstado);
+                }
+                audioText.setText(audioLabel());
+            });
+
+        this.add.text(width / 2, height / 2 + 100, 'Quit to Menu', { fontSize: '32px', fill: '#f00' })
+            .setOrigin(0.5)
+            .setInteractive()
+            .on('pointerdown', () => {
+                const gameScene = this.scene.get('GameScene');
+                if (gameScene && gameScene.audioManager) {
+                    gameScene.audioManager.destroyMusic();
+                }
                 this.scene.stop('GameScene');
                 this.scene.start('MenuScene');
             });
