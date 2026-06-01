@@ -22,9 +22,14 @@ export default class HUD {
         this.livesText = scene.add.text(10, 40, '', { fontSize: '20px', fill: '#000' }).setScrollFactor(0);
         this.levelText = scene.add.text(400, 10, '', { fontSize: '20px', fill: '#000' }).setOrigin(0.5, 0).setScrollFactor(0);
         this.highScoreText = scene.add.text(790, 10, '', { fontSize: '20px', fill: '#000' }).setOrigin(1, 0).setScrollFactor(0);
-
-        // Inicializa los textos con los valores actuales del juego.
+        
         this.updateHUD();
+    }
+
+    resize(gameSize) {
+        const width = gameSize?.width || this.scene.scale.width;
+        this.levelText.setX(width / 2);
+        this.highScoreText.setX(width - 20);
     }
 
     /**
