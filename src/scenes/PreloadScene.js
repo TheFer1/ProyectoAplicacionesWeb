@@ -1,8 +1,22 @@
+/**
+ * PreloadScene
+ *
+ * Escena encargada de cargar los recursos del juego (imágenes, audio,
+ * texturas generadas) antes de arrancar la aplicación. Contiene una barra
+ * de progreso y genera texturas placeholder para pruebas locales.
+ */
 export class PreloadScene extends Phaser.Scene {
     constructor() {
         super('PreloadScene');
     }
 
+    /**
+     * preload()
+     *
+     * Carga los assets necesarios mediante `this.load` y muestra una barra
+     * de progreso. También invoca `generateAssets()` para crear texturas
+     * placeholder cuando alguna imagen real no esté disponible.
+     */
     preload() {
         const { width, height } = this.scale;
 
@@ -64,10 +78,22 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image('checkpoint', 'assets/imagenes/checkpoint.png');
     }
 
+    /**
+     * create()
+     *
+     * Ejecutado por Phaser tras completar `preload`. Aquí simplemente
+     * arrancamos la escena del menú.
+     */
     create() {
         this.scene.start('MenuScene');
     }
     
+    /**
+     * generateAssets()
+     *
+     * Genera texturas simples (coloreadas o transparentes) utilizadas como
+     * placeholders durante el desarrollo si faltan recursos reales.
+     */
     generateAssets() {
         // Generate placeholder graphics for objects
         const g = this.add.graphics();

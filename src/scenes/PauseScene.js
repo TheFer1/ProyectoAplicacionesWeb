@@ -1,8 +1,18 @@
+// PauseScene.js
+// Escena de pausa sencilla: muestra opciones para reanudar o salir al menú.
+
 export class PauseScene extends Phaser.Scene {
     constructor() {
         super('PauseScene');
     }
 
+    /**
+     * create()
+     *
+     * Dibuja una superposición semitransparente y botones para reanudar
+     * la partida o volver al menú. Al reanudar, se detiene la escena de
+     * pausa y se reanuda `GameScene`.
+     */
     create() {
         const { width, height } = this.scale;
 

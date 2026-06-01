@@ -1,3 +1,7 @@
+// main.js — Punto de entrada del juego.
+// Configura la instancia de Phaser con la lista de escenas, físicas
+// y opciones de escala, y crea el objeto `Phaser.Game`.
+
 import Phaser from 'phaser';
 
 import { PreloadScene } from './scenes/PreloadScene.js';
@@ -7,6 +11,12 @@ import { PauseScene } from './scenes/PauseScene.js';
 import { GameOverScene } from './scenes/GameOverScene.js';
 import { VictoryScene } from './scenes/VictoryScene.js';
 
+/**
+ * Configuración principal de Phaser.
+ * - `scene`: orden en el que se registran las escenas del juego.
+ * - `scale`: modo de escalado para ajustar al tamaño de la ventana.
+ * - `physics`: configuración del sistema de físicas Arcade.
+ */
 const config = {
     type: Phaser.AUTO,
     width: 800,
