@@ -1,37 +1,20 @@
-/**
- * PreloadScene
- *
- * Escena encargada de cargar los recursos del juego (imágenes, audio,
- * texturas generadas) antes de arrancar la aplicación. Contiene una barra
- * de progreso y genera texturas placeholder para pruebas locales.
- */
 export class PreloadScene extends Phaser.Scene {
     constructor() {
         super('PreloadScene');
     }
 
-    /**
-     * preload()
-     *
-     * Carga los assets necesarios mediante `this.load` y muestra una barra
-     * de progreso. También invoca `generateAssets()` para crear texturas
-     * placeholder cuando alguna imagen real no esté disponible.
-     */
     preload() {
         const { width, height } = this.scale;
 
-        // Loading text
         const loadingText = this.add.text(width / 2, height / 2 - 50, 'Loading...', {
             fontSize: '32px',
             fill: '#ffffff'
         }).setOrigin(0.5);
 
-        // Progress bar outline
         const border = this.add.graphics();
         border.lineStyle(4, 0xffffff, 1);
         border.strokeRect(width / 4, height / 2, width / 2, 30);
 
-        // Progress bar fill
         const bar = this.add.graphics();
         
         this.load.on('progress', (value) => {
@@ -47,53 +30,27 @@ export class PreloadScene extends Phaser.Scene {
         this.load.audio('coinSound', 'assets/audio/coin1.mp3');
         this.load.audio('damageSound', 'assets/audio/pain6.mp3');
 
-        // Cargar imagen estática del personaje
         this.load.image('player', 'assets/imagenes/Personaje.png');
-
-        // Cargar enemigo final
         this.load.image('boss', 'assets/imagenes/enemigo.png');
-
-        // Cargar fondos
         this.load.image('bg_nivel1', 'assets/imagenes/escenario.jpg');
         this.load.image('bg_nivel2', 'assets/imagenes/Escenario2.jpg');
         this.load.image('bg_nivel3', 'assets/imagenes/Escenario3.png');
-
-        // Fondo del menú
         this.load.image('menu-bg', 'assets/imagenes/menu-bg.png');
         this.load.image('victory-bg', 'assets/imagenes/victory-bg.png');
         this.load.image('espina', 'assets/imagenes/espinas.png');
-
-        // Enemigo (imagen real)
         this.load.image('enemy', 'assets/imagenes/enemis.png');
-
-        // bloques y plataformas
         this.load.image('bloquesPlanta', '/assets/imagenes/bloquesplat.png');
         this.load.image('bloquesMadera', '/assets/imagenes/platmad.png');
         this.load.image('bloquesLava', '/assets/imagenes/plataformapiedra.png');
-
-        // Since we don't have real assets, we generate them procedurally for testing
-        this.generateAssets();
-
-        // Cargar imagen real de checkpoint (si existe en public/assets/imagenes)
         this.load.image('checkpoint', 'assets/imagenes/checkpoint.png');
+
+        this.generateAssets();
     }
 
-    /**
-     * create()
-     *
-     * Ejecutado por Phaser tras completar `preload`. Aquí simplemente
-     * arrancamos la escena del menú.
-     */
     create() {
         this.scene.start('MenuScene');
     }
     
-    /**
-     * generateAssets()
-     *
-     * Genera texturas simples (coloreadas o transparentes) utilizadas como
-     * placeholders durante el desarrollo si faltan recursos reales.
-     */
     generateAssets() {
         const g = this.add.graphics();
         

@@ -1,8 +1,3 @@
-// GameOverScene.js
-// Pantalla que se muestra cuando el jugador pierde todas sus vidas. Muestra
-// el puntaje final, indica si se ha alcanzado un nuevo récord y permite
-// volver al menú.
-
 import StorageManager from '../managers/StorageManager.js';
 import GameManager from '../managers/GameManager.js';
 
@@ -11,13 +6,6 @@ export class GameOverScene extends Phaser.Scene {
         super('GameOverScene');
     }
 
-    /**
-     * create()
-     *
-     * Dibuja los textos de GAME OVER, el puntaje final y un mensaje para
-     * reiniciar. Si el puntaje actual supera el high score, lo guarda y
-     * lo indica visualmente.
-     */
     create() {
         const { width, height } = this.scale;
 
