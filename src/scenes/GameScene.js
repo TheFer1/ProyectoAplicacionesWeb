@@ -541,16 +541,17 @@ export class GameScene extends Phaser.Scene {
         if (this.isTransitioning) return;
         this.isTransitioning = true;
         GameManager.loseLife();
-        
+    
         this.cameras.main.fadeOut(500, 255, 0, 0);
         this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
             if (GameManager.state.lives <= 0) {
+                this.sound.stopAll();
                 this.scene.start('GameOverScene');
             } else {
                 this.scene.restart();
             }
-        });
-    }
+    });
+}
 
     /**
      * avanzarAlSiguienteNivel()
@@ -560,11 +561,12 @@ export class GameScene extends Phaser.Scene {
      */
     avanzarAlSiguienteNivel() {
         if (GameManager.state.level >= 3) {
-            this.scene.start('VictoryScene'); 
+            this.sound.stopAll();
+            this.scene.start('VictoryScene');
         } else {
             GameManager.state.level++;
             StorageManager.setLastLevel(GameManager.state.level);
-            this.scene.start('GameScene'); 
+         this.scene.start('GameScene');
         }
     }
 }

@@ -14,6 +14,9 @@ export default class AudioManager {
     constructor(scene) {
         this.scene = scene;
         this.enabled = StorageManager.getAudioConfig();
+        this.currentMusic = null;
+        this.currentMusicKey = null;
+        this.currentMusicConfig = null;
     }
 
     /**
@@ -23,9 +26,43 @@ export default class AudioManager {
      * iniciar la misma pista más de una vez comprobando `scene.sound.get`.
      */
     playMusic(key, config = { loop: true, volume: 0.5 }) {
+        this.currentMusicKey = key;
+        this.currentMusicConfig = config;
+
         if (!this.enabled) return;
-        if (this.scene.sound.get(key)) return; // already playing
-        this.scene.sound.play(key, config);
+        if (this.currentMusic && this.currentMusic.isPlaying) return;
+
+        // Si existe pausado, reanudarlo
+        if (this.currentMusic && !this.currentMusic.isPlaying) {
+            this.currentMusic.resume();
+            return;
+        }
+
+        // Crear nuevo
+        this.currentMusic = this.scene.sound.add(key, config);
+        this.currentMusic.play();
+    }
+
+    setEnabled(enabled) {
+        this.enabled = enabled;
+        StorageManager.setAudioConfig(enabled);
+
+        if (!this.enabled) {
+            // Pausar sin destruir
+            if (this.currentMusic && this.currentMusic.isPlaying) {
+                this.currentMusic.pause();
+            }
+        } else {
+            // Reanudar o crear si no existe
+            if (this.currentMusic) {
+                if (!this.currentMusic.isPlaying) {
+                    this.currentMusic.resume();
+                }
+            } else if (this.currentMusicKey) {
+                this.currentMusic = this.scene.sound.add(this.currentMusicKey, this.currentMusicConfig);
+                this.currentMusic.play();
+            }
+        }
     }
 
     /**
@@ -34,7 +71,11 @@ export default class AudioManager {
      * Detiene toda la reproducción de audio en la escena.
      */
     stopMusic() {
-        this.scene.sound.stopAll();
+        if (this.currentMusic) {
+            this.currentMusic.stop();
+            this.currentMusic.destroy();
+            this.currentMusic = null;
+        }
     }
 
     /**
@@ -47,18 +88,7 @@ export default class AudioManager {
         this.scene.sound.play(key, { volume });
     }
 
-    /**
-     * toggleAudio()
-     *
-     * Alterna el estado de audio (on/off), guarda la preferencia en
-     * `StorageManager` y detiene la música si se desactiva.
-     */
-    toggleAudio() {
-        this.enabled = !this.enabled;
-        StorageManager.setAudioConfig(this.enabled);
-        if (!this.enabled) {
-            this.stopMusic();
-        }
-        return this.enabled;
+    destroyMusic() {
+        this.stopMusic();
     }
 }

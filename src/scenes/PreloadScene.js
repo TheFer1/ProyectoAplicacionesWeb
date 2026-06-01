@@ -41,6 +41,7 @@ export class PreloadScene extends Phaser.Scene {
         });
 
         // Cargar audios
+        this.load.audio('menuMusic', 'assets/audio/teme_V2.2.mp3');
         this.load.audio('bgMusic', 'assets/audio/teme_V2.3.mp3');
         this.load.audio('jumpSound', 'assets/audio/jump1.mp3');
         this.load.audio('coinSound', 'assets/audio/coin1.mp3');
@@ -70,7 +71,6 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image('bloquesMadera', '/assets/imagenes/platmad.png');
         this.load.image('bloquesLava', '/assets/imagenes/plataformapiedra.png');
 
-
         // Since we don't have real assets, we generate them procedurally for testing
         this.generateAssets();
 
@@ -95,49 +95,39 @@ export class PreloadScene extends Phaser.Scene {
      * placeholders durante el desarrollo si faltan recursos reales.
      */
     generateAssets() {
-        // Generate placeholder graphics for objects
         const g = this.add.graphics();
         
-        // El personaje ahora es una imagen real, no generamos el cuadrado azul aquí
-        
-        // Enemy (Red square)
         g.fillStyle(0xff0000);
         g.fillRect(0, 0, 32, 32);
         g.generateTexture('espina', 32, 32);
         g.clear();
         
-        // Coin (Yellow circle)
         g.fillStyle(0xffff00);
         g.fillCircle(10, 10, 10);
         g.generateTexture('coin', 20, 20);
         g.clear();
         
-        // Ground/Platform (invisible physical body used as floor)
-        g.fillStyle(0x000000, 0); // fully transparent
+        g.fillStyle(0x000000, 0);
         g.fillRect(0, 0, 800, 32);
         g.generateTexture('ground', 800, 32);
         g.clear();
 
-        // Platform (short) - invisible placeholder if needed
-        g.fillStyle(0x000000, 0); // fully transparent
+        g.fillStyle(0x000000, 0);
         g.fillRect(0, 0, 100, 20);
         g.generateTexture('platform', 100, 20);
         g.clear();
 
-        // Checkpoint (Flag)
         g.fillStyle(0x00ffff);
         g.fillRect(0, 0, 20, 60);
         g.generateTexture('checkpoint-placeholder', 20, 60);
         g.clear();
 
-        // PowerUp (Magenta Diamond)
         g.fillStyle(0xff00ff);
         g.fillTriangle(10, 0, 20, 10, 10, 20, 0, 10);
         g.generateTexture('powerup', 20, 20);
         g.clear();
 
-        // Goal / Portal
-        g.fillStyle(0xffd700); // Oro
+        g.fillStyle(0xffd700);
         g.fillRoundedRect(0, 0, 40, 60, 10);
         g.generateTexture('goal', 40, 60);
         g.clear();
