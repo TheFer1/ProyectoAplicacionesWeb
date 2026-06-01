@@ -92,8 +92,13 @@ export class GameScene extends Phaser.Scene {
 
         const createPauseButton = () => {
             const x = this.scale.width - 20;
-            if (!this.pauseButton) {
-                this.pauseButton = this.add.text(x, 50, '⏸', {
+            const y = 62;
+            const needsRecreate = !this.pauseButton || !this.pauseButton.scene;
+            if (needsRecreate) {
+                if (this.pauseButton) {
+                    this.pauseButton.destroy();
+                }
+                this.pauseButton = this.add.text(x, y, '⏸', {
                         fontSize: '40px',
                         fill: '#ffde00',
                         stroke: '#000000',
@@ -101,8 +106,9 @@ export class GameScene extends Phaser.Scene {
                     })
                     .setOrigin(1, 0)
                     .setScrollFactor(0)
+                    .setDepth(1000)
                     .setInteractive({ useHandCursor: true })
-                    .on('pointerover', () => this.pauseButton.setScale(1.1))
+                    .on('pointerover', () => this.pauseButton.setScale(1.08))
                     .on('pointerout', () => this.pauseButton.setScale(1))
                     .on('pointerdown', () => {
                         this.scene.pause();
@@ -110,6 +116,9 @@ export class GameScene extends Phaser.Scene {
                     });
             } else {
                 this.pauseButton.setX(x);
+                this.pauseButton.setY(y);
+                this.pauseButton.setDepth(1000);
+                this.pauseButton.setVisible(true);
             }
         };
 
