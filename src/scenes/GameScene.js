@@ -72,13 +72,31 @@ export class GameScene extends Phaser.Scene {
         this.hud = new HUD(this);
         this.mobileControls = new MobileControls(this);
 
-        this.add.text(750, 50, '||', { fontSize: '32px', fill: '#fff' })
-            .setScrollFactor(0)
-            .setInteractive()
-            .on('pointerdown', () => {
-                this.scene.pause();
-                this.scene.launch('PauseScene');
-            });
+        const createPauseButton = () => {
+            const x = this.scale.width - 20;
+            if (!this.pauseButton) {
+                this.pauseButton = this.add.text(x, 50, '⏸', {
+                        fontSize: '40px',
+                        fill: '#ffde00',
+                        stroke: '#000000',
+                        strokeThickness: 4
+                    })
+                    .setOrigin(1, 0)
+                    .setScrollFactor(0)
+                    .setInteractive({ useHandCursor: true })
+                    .on('pointerover', () => this.pauseButton.setScale(1.1))
+                    .on('pointerout', () => this.pauseButton.setScale(1))
+                    .on('pointerdown', () => {
+                        this.scene.pause();
+                        this.scene.launch('PauseScene');
+                    });
+            } else {
+                this.pauseButton.setX(x);
+            }
+        };
+
+        createPauseButton();
+        this.scale.on('resize', createPauseButton);
 
         if (GameManager.state.level === 3) {
             this.crearJefeFinal();
